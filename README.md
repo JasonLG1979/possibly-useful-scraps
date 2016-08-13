@@ -61,7 +61,7 @@ A decorator that can be used on free functions so they will be called asynchrono
 <i>Example:</i>
 
 ```python
-    def do_async_stuff(self, input_string):
+    def do_async_stuff(self):
         def on_async_done(result, error):
             # Do stuff with the result and handle errors in the main thread.
             if error:
@@ -76,5 +76,5 @@ A decorator that can be used on free functions so they will be called asynchrono
             stuff = input_string + ' Done in a different thread.'
             return stuff
 
-        do_expensive_stuff_in_thread(input_string)
+        do_expensive_stuff_in_thread('stuff')
 ```
