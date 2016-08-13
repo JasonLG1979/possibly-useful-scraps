@@ -2,7 +2,7 @@
 A collection of possibly useful scraps so far containing a couple PyGObject scripts.
 #SimpleDBusNotifications:
 
-Very simple DBus Notifications with actions support.
+Very simple DBus Notifications with hint and actions support.
 It uses the default timeout and each subsequent
 notification replaces the previous.
 Although both Initialization and the Notify method call are asynchronous,
