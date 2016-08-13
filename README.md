@@ -20,8 +20,6 @@ class Notify:
 
     def on_init(self):
         def on_init_finish(caps):
-            if 'action-icons' in caps:
-                self.notification.set_hint('action-icons', GLib.Variant('b', True))
             self.supports_actions = 'actions' in caps
             self.parent.connect('some-bool-signal', self.set_notification)
 
