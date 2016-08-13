@@ -15,6 +15,7 @@ in the main thread.
 class Notify:
     def __init__(self, parent):
     self.parent = parent
+    self.notification = None
     self.supports_actions = False
     self.on_init()
 
