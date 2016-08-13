@@ -73,8 +73,8 @@ A decorator that can be used on free functions so they will be called asynchrono
         def do_expensive_stuff_in_thread(input_string):
             # Pretend to do expensive stuff...
             time.sleep(10)
-            stuff = input_string + ' Done in a different thread.'
+            stuff = input_string + ' done in a different thread.'
             return stuff
 
-        do_expensive_stuff_in_thread('stuff')
+        do_expensive_stuff_in_thread('Stuff')
 ```
