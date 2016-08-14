@@ -64,7 +64,12 @@ class NotifyExample:
             body = 'You prefer {}.'.format(self.cute_animals)
             icon = 'dialog-information'
             self.notification.new(summary, body, icon)
-            time.sleep(1)#give the call a chance to do it's thing
+            # notification.new is async(non-blocking)
+            # We have to give it a split sec before we call Gtk.main_quit()
+            # otherwise sometimes the mainloop is killed before our notification is sent.
+            # Part of the weirdness of using a ui toolkit with no ui in combination with async calls I guess?
+            # Normally your app would control the mainloop not a desktop notification.
+            time.sleep(1)
             Gtk.main_quit()
 
 if __name__ == '__main__':
