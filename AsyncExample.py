@@ -1,4 +1,3 @@
-
 import time
 import random
 import gi
@@ -11,7 +10,7 @@ class GLibAsyncDemo(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title='GLib_async Demo')
         self.ui_loop_timer_id = 0
-        self.time_sec = 0
+        self.time_sec = 1000
         self.init_ui()
         self.init_notifications()
 
@@ -25,11 +24,11 @@ class GLibAsyncDemo(Gtk.Window):
         self.button = Gtk.Button.new_with_label('Reset Clock')
         self.button.connect('clicked', self.reset_clock)
         vbox.pack_start(self.button, True, True, 0)
-        self.create_ui_loop()
 
     def init_notifications(self):
         def on_init_finish(caps):
             self.async_sleep()
+            self.create_ui_loop()
 
         self.notification = SimpleDBusNotifications.async_init('GLib_async Demo', on_init_finish)
 
@@ -50,18 +49,19 @@ class GLibAsyncDemo(Gtk.Window):
         m, s = divmod(s, 60)
         h, m = divmod(m, 60)
         if h:
-            return '{:02d}:{:02d}:{:02d}:{:03d}'.format(h,m,s,ms)
+            return '{:02d}:{:02d}:{:02d}:{:03d}'.format(h, m, s, ms)
         else:
-            return '{:02d}:{:02d}:{:03d}'.format(m,s, ms)
+            return '{:02d}:{:02d}:{:03d}'.format(m, s, ms)
 
     def async_sleep(self):
         def wake_back_up(result, error):
             if error:
                 print(error)
                 return
+            self.async_sleep()
             self.send_wake_notification(result)
 
-        @GLib_async_func(on_done=wake_back_up, PRIORITY=GLib.PRIORITY_LOW)
+        @GLib_async_func(on_done=wake_back_up, PRIORITY=GLib.PRIORITY_HIGH)
         def go_to_sleep(sleep_time):
             # If this sleep were done in the main thread
             # the clock would stop.
@@ -88,7 +88,6 @@ class GLibAsyncDemo(Gtk.Window):
         body = 'Slept for about {} seconds.'.format(secs)
         icon = 'dialog-information'
         self.notification.new(summary, body, icon)
-        self.async_sleep()
 
 if __name__ == '__main__':
     win = GLibAsyncDemo()
