@@ -8,6 +8,7 @@ class NotifyExample:
     def __init__(self):
         self.notification = None
         self.supports_actions = False
+        self.quit_on_close = False
         self.on_init()
 
     def on_init(self):
@@ -23,7 +24,11 @@ class NotifyExample:
         if id != notification.id:#we only care about our notification
            return
         if signal_name == 'NotificationClosed':
-            Gtk.main_quit() 
+            self.maybe_quit()
+
+    def maybe_quit(self):
+        if self.quit_on_close:
+            Gtk.main_quit()   
 
     def set_notification(self):
         if self.supports_actions:
@@ -36,6 +41,7 @@ class NotifyExample:
             body = 'I guess we will never know if you prefer puppies or kittens.'
             icon = 'dialog-error'
         self.notification.new(summary, body, icon)
+        self.quit_on_close = True
 
     def set_actions(self):
         self.notification.add_action('action-id-puppies', 
@@ -49,9 +55,11 @@ class NotifyExample:
         )
 
     def puppies_cb(self):
+        self.quit_on_close = False
         self.you_prefer('Puppies')
 
     def kittens_cb(self):
+        self.quit_on_close = False
         self.you_prefer('Kittens')
 
     def you_prefer(self, cute_animals):
@@ -60,6 +68,7 @@ class NotifyExample:
         body = 'You prefer {}.'.format(cute_animals)
         icon = 'dialog-information'
         self.notification.new(summary, body, icon)
+        self.quit_on_close = True
 
 if __name__ == '__main__':
     app = NotifyExample()
