@@ -1,3 +1,4 @@
+
 import time
 import random
 import gi
@@ -44,13 +45,14 @@ class GLibAsyncDemo(Gtk.Window):
         self.destroy_ui_loop()
         self.create_ui_loop()
 
-    def format_time(self, seconds):
-        m, s = divmod(seconds, 60)
+    def format_time(self, milliseconds):
+        s, ms = divmod(milliseconds, 1000)
+        m, s = divmod(s, 60)
         h, m = divmod(m, 60)
         if h:
-            return '{:02d}:{:02d}:{:02d}'.format(h,m,s)
+            return '{:02d}:{:02d}:{:02d}:{:03d}'.format(h,m,s,ms)
         else:
-            return '{:02d}:{:02d}'.format(m,s)
+            return '{:02d}:{:02d}:{:03d}'.format(m,s, ms)
 
     def async_sleep(self):
         def wake_back_up(result, error):
@@ -66,13 +68,13 @@ class GLibAsyncDemo(Gtk.Window):
             went_to_sleep = time.time()
             time.sleep(sleep_time)
             woke_up = time.time()
-            return round(woke_up - went_to_sleep, 3)
+            return '{:6.3f}'.format(round(woke_up - went_to_sleep, 3))
 
         go_to_sleep(random.uniform(5.0, 10.0))
 
     def create_ui_loop(self):
         if not self.ui_loop_timer_id:
-            self.ui_loop_timer_id = GLib.timeout_add_seconds(1, self.update_time)
+            self.ui_loop_timer_id = GLib.timeout_add(1, self.update_time)
 
     def destroy_ui_loop(self):
         if self.ui_loop_timer_id:
