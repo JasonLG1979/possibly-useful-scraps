@@ -5,6 +5,7 @@ from gi.repository import Gtk
 from SimpleDBusNotifications import *
 
 class NotificationsDemo(Gtk.Window):
+
     def __init__(self):
         Gtk.Window.__init__(self, title='Notifications Demo')
         self.supports_actions = False
@@ -63,9 +64,12 @@ class NotificationsDemo(Gtk.Window):
             icon = 'dialog-error'
         self.notification.new(summary, body, icon)
         if self.selected_animal:
-            self.label.set_label('You preferred {} last time.'.format(self.selected_animal))
+            self.label.set_label('Well you don\'t like {}, how about one of these?'.format(self.selected_animal))
+            self.button.set_label('No Those Suck To!!! Ask Me Again...')
         else:
             self.label.set_label('They will not block the main thread.')
+            if self.supports_actions:
+                self.button.set_label('Those Suck, Ask Me Again...')
 
     def set_actions(self):
         self.notification.clear_actions()
@@ -99,7 +103,7 @@ class NotificationsDemo(Gtk.Window):
         # you'd be able to see the label from the callbacks
         # until it unblocked.
         self.notification.new(summary, body, icon)
-        self.button.set_label('Ask Again...')
+        self.button.set_label('No {} Suck!!! Ask Me Again...'.format(self.selected_animal))
         self.label.set_label('Are you sure you prefer {}?'.format(self.selected_animal))
 
 if __name__ == '__main__':
