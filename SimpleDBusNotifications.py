@@ -53,6 +53,10 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         self.init_async(GLib.PRIORITY_DEFAULT, None, on_init_finish, callback)
         return self
 
+    @property
+    def id(self):
+        return self._replace_id
+
     def new(self, summary, body, icon):
         def on_Notify_finish(self, result):
             self._replace_id = self.call_finish(result).unpack()[0]
@@ -69,7 +73,7 @@ class SimpleDBusNotifications(Gio.DBusProxy):
                   on_Notify_finish,
         )
 
-    def add_action(self, action_id, label, callback):     
+    def add_action(self, action_id, label, callback):    
         self._actions += [action_id, label]
         self._callbacks[action_id] = callback
 
