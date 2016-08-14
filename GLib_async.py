@@ -23,7 +23,7 @@ import threading
 import traceback
 from gi.repository import GLib
 
-__all__ = ['async_function']
+__all__ = ['GLib_async_func']
 
 def _async_call(f, args, kwargs, on_done, PRIORITY):
     def run(data):
@@ -43,7 +43,7 @@ def _async_call(f, args, kwargs, on_done, PRIORITY):
     thread.daemon = True
     thread.start()
 
-def async_function(on_done=None, PRIORITY=GLib.PRIORITY_DEFAULT_IDLE):
+def GLib_async_func(on_done=None, PRIORITY=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
             _async_call(f, args, kwargs, on_done, PRIORITY)
