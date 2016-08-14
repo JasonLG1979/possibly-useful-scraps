@@ -76,6 +76,9 @@ class NotificationsDemo(Gtk.Window):
         summary = 'You have made your choice.'
         body = 'You prefer {}.'.format(self.cute_animals)
         icon = 'dialog-information'
+        # If notifications were not async(non-blocking)
+        # you'd be able to see the label from the callbacks
+        # until it unblocked.
         self.notification.new(summary, body, icon)
         self.button.set_label('Ask Again...')
         self.label.set_label('Are you sure you prefer {}?'.format(self.cute_animals))
