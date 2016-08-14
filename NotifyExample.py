@@ -20,7 +20,7 @@ class NotifyExample:
 
     def g_signal_handler(self, notification, sender_name, signal_name, parameters):
         id, signal_value = parameters.unpack()
-        if id != self.notification.id:#we only care about our notification
+        if id != notification.id:#we only care about our notification
            return
         if signal_name == 'NotificationClosed':
             Gtk.main_quit() 
