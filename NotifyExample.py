@@ -1,32 +1,35 @@
-import time
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from SimpleDBusNotifications import *
 
-class NotifyExample:
-    def __init__(self):
-        self.notification = None
-        self.supports_actions = False
-        self.cute_animals = 'Neither'
-        self.on_init()
+class NotificationsDemo(Gtk.Window):
 
-    def on_init(self):
+    def __init__(self):
+        Gtk.Window.__init__(self, title='Notifications Demo')
+        self.supports_actions = False
+        self.init_notifications()
+        self.init_ui()
+
+    def init_ui(self):
+        self.set_border_width(10)
+
+        hbox = Gtk.Box(spacing=6)
+        self.add(hbox)
+        button = Gtk.Button.new_with_label('Ask the most import of all questions...')
+        button.connect('clicked', self.on_question_clicked)
+        hbox.pack_start(button, True, True, 0)
+
+    def init_notifications(self):
         def on_init_finish(caps):
             self.supports_actions = 'actions' in caps
-            self.notification.connect('g-signal', self.g_signal_handler)
-            self.set_notification()
 
-        self.notification = SimpleDBusNotifications.async_init('Puppies vs Kittens', on_init_finish)
+        self.notification = SimpleDBusNotifications.async_init('Notifications Demo', on_init_finish)
 
-    def g_signal_handler(self, notification, sender_name, signal_name, parameters):
-        id, signal_value = parameters.unpack()
-        if id != notification.id:#we only care about our notification
-            return
-        if signal_name == 'NotificationClosed':
-            self.you_prefer()  
+    def on_question_clicked(self, button):
+        self.send_first_notification()
 
-    def set_notification(self):
+    def send_first_notification(self):
         if self.supports_actions:
             self.set_actions()
             summary = 'Your notification server supports actions.'
@@ -34,11 +37,12 @@ class NotifyExample:
             icon = 'dialog-question'
         else:
             summary = 'Your notification server does not support actions.' 
-            body = 'I guess we will never know if you prefer puppies or kittens.'
+            body = 'I guess we will never know if you prefer Puppies or Kittens.'
             icon = 'dialog-error'
         self.notification.new(summary, body, icon)
 
     def set_actions(self):
+        self.notification.clear_actions()
         self.notification.add_action('action-id-puppies', 
                                      'Puppies',
                                      self.puppies_cb,
@@ -50,28 +54,20 @@ class NotifyExample:
         )
 
     def puppies_cb(self):
-        self.cute_animals = 'Puppies'
+        self.you_prefer('Puppies')
 
     def kittens_cb(self):
-        self.cute_animals = 'Kittens'
+        self.you_prefer('Kittens')
 
-    def you_prefer(self):
-        if not self.supports_actions:
-            Gtk.main_quit()
-        else:
-            self.notification.clear_actions()
-            summary = 'You have made your choice.'
-            body = 'You prefer {}.'.format(self.cute_animals)
-            icon = 'dialog-information'
-            self.notification.new(summary, body, icon)
-            # notification.new is async(non-blocking)
-            # We have to give it a split sec before we call Gtk.main_quit()
-            # otherwise sometimes the mainloop is killed before our notification is sent.
-            # Part of the weirdness of using a ui toolkit with no ui in combination with async calls I guess?
-            # Normally your app would control the mainloop not a desktop notification.
-            time.sleep(1)
-            Gtk.main_quit()
+    def you_prefer(self, cute_animals):
+        self.notification.clear_actions()
+        summary = 'You have made your choice.'
+        body = 'You prefer {}.'.format(cute_animals)
+        icon = 'dialog-information'
+        self.notification.new(summary, body, icon)
 
 if __name__ == '__main__':
-    app = NotifyExample()
+    win = NotificationsDemo()
+    win.connect("delete-event", Gtk.main_quit)
+    win.show_all()
     Gtk.main()
