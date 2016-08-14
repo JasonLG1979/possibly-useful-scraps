@@ -49,10 +49,17 @@ class NotifyExample:
         )
 
     def puppies_cb(self):
-        print('You like puppies...')
+        self.you_prefer('Puppies')
 
     def kittens_cb(self):
-        print('You like kittens...')
+        self.you_prefer('Kittens')
+
+    def you_prefer(self, cute_animals):
+        self.notification.clear_actions()
+        summary = 'You have made your choice.'
+        body = 'You prefer {}.'.format(cute_animals)
+        icon = 'dialog-information'
+        self.notification.new(summary, body, icon)
 
 if __name__ == '__main__':
     app = NotifyExample()
