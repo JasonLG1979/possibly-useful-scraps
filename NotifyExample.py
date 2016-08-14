@@ -1,3 +1,4 @@
+
 import random
 import gi
 gi.require_version('Gtk', '3.0')
@@ -5,7 +6,6 @@ from gi.repository import Gtk
 from SimpleDBusNotifications import *
 
 class NotificationsDemo(Gtk.Window):
-
     def __init__(self):
         Gtk.Window.__init__(self, title='Notifications Demo')
         self.supports_actions = False
