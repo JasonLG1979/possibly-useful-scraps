@@ -54,7 +54,7 @@ class Notify:
     def false_cb(self):
         print('False')
 ```
-#GObjectAsync:
+#GLib_async:
 
 A decorator that can be used on free functions so they will be called asynchronously.(using python threads)
 
@@ -69,7 +69,7 @@ A decorator that can be used on free functions so they will be called asynchrono
             elif result:
                 print(result)
 
-        @async_function(on_done=on_async_done, PRIORITY=GLib.PRIORITY_LOW)
+        @GLib_async_func(on_done=on_async_done, PRIORITY=GLib.PRIORITY_LOW)
         def do_expensive_stuff_in_thread(input_string):
             # Pretend to do expensive stuff...
             time.sleep(10)
