@@ -25,26 +25,27 @@ from gi.repository import GLib
 
 __all__ = ['async_function']
 
-def _async_call(f, args, kwargs, on_done):
+def _async_call(f, args, kwargs, on_done, PRIORITY):
     def run(data):
-        f, args, kwargs, on_done = data
-        error = None
+        f, args, kwargs, on_done, PRIORITY = data
         result = None
+        error = None
         try:
             result = f(*args, **kwargs)
         except Exception as e:
             e.traceback = traceback.format_exc()
             error = 'Unhandled exception in async call:\n{}'.format(e.traceback)
-        GLib.idle_add(lambda: on_done(result, error))
+        if on_done:
+            GLib.idle_add(lambda: on_done(result, error), priority=PRIORITY)
 
-    data = f, args, kwargs, on_done
+    data = f, args, kwargs, on_done, PRIORITY
     thread = threading.Thread(target=run, args=(data,))
     thread.daemon = True
     thread.start()
 
-def async_function(on_done=None):
+def async_function(on_done=None, PRIORITY=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
-            _async_call(f, args, kwargs, on_done)
+            _async_call(f, args, kwargs, on_done, PRIORITY)
         return run
     return wrapper
