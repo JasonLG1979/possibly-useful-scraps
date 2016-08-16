@@ -76,7 +76,7 @@ class GLibAsyncDemo(Gtk.Window):
     def send_wake_notification(self, secs):
         summary = 'Just Woke Back Up.'
         body = 'Slept for about {} seconds that time.'.format(secs)
-        icon = 'dialog-information'
+        icon = 'dialog-information-symbolic'
         self.notification.new(summary, body, icon)
         self.async_sleep()
 
