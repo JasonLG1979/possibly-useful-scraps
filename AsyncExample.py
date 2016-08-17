@@ -51,7 +51,7 @@ class GLibAsyncDemo(Gtk.Window):
             self.button.set_label('Start Clock')
         else:
             self.ui_loop_timer_id = GLib.timeout_add(1000, self.update_time)
-            self.button.set_label('Reset Clock')
+            self.button.set_label('Stop Clock')
 
     def async_sleep(self):
         # When the work is done the callback recieves
@@ -62,15 +62,14 @@ class GLibAsyncDemo(Gtk.Window):
                 return
             self.send_wake_notification(result)
 
-                         #async callback       #priority at which the main thread is re-entered.
-        @GLib_async_func(on_done=wake_back_up, PRIORITY=GLib.PRIORITY_LOW)
+                         # async callback      # priority at which the main thread is re-entered
+        @GLib_async(on_done=wake_back_up, PRIORITY=GLib.PRIORITY_LOW)
         # Work done in seperate thread.
         def go_to_sleep(sleep_time):
             went_to_sleep = time.time()
             time.sleep(sleep_time)
             woke_up = time.time()
             return round(woke_up - went_to_sleep)
-
         go_to_sleep(random.randint(5, 15))
 
     def send_wake_notification(self, secs):
