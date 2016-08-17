@@ -62,7 +62,7 @@ class GLibAsyncDemo(Gtk.Window):
                 return
             self.send_wake_notification(result)
 
-                         # async callback      # priority at which the main thread is re-entered
+                    # async callback      # priority at which the main thread is re-entered
         @GLib_async(on_done=wake_back_up, PRIORITY=GLib.PRIORITY_LOW)
         # Work done in seperate thread.
         def go_to_sleep(sleep_time):
