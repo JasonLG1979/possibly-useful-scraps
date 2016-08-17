@@ -36,7 +36,7 @@ def GLib_async(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
                     e.traceback = traceback.format_exc()
                     error = 'Unhandled exception in async call:\n{}'.format(e.traceback)
                 if on_done:
-                    GLib.idle_add(on_done, result, error, priority=priority)
+                    GLib.idle_add(lambda: on_done(result, error), priority=priority)
 
             args = f, args, kwargs, on_done, priority
             thread = threading.Thread(target=in_thread, args=(args,))
