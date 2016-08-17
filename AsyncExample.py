@@ -70,6 +70,7 @@ class GLibAsyncDemo(Gtk.Window):
             time.sleep(sleep_time)
             woke_up = time.time()
             return round(woke_up - went_to_sleep)
+
         go_to_sleep(random.randint(5, 15))
 
     def send_wake_notification(self, secs):
