@@ -16,7 +16,17 @@
 
 #See <https://developer.gnome.org/notification-spec/> for documentation.
 
-from gi.repository import GLib, Gio
+from gi.repository import GObject, GLib, Gio
+
+class Signals(GObject.GObject):
+
+    __gsignals__ = {
+        'ActionInvoked': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'NotificationClosed': (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+    }
+
+    def __init__(self):
+        super().__init__()
 
 class SimpleDBusNotifications(Gio.DBusProxy):
     def __init__(self, **kwargs):
@@ -49,13 +59,10 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         self._actions = []
         self._callbacks = {}
         self._hints = {}
-        self._app_name = app_name     
+        self._app_name = app_name
+        self.signals = Signals()     
         self.init_async(GLib.PRIORITY_DEFAULT, None, on_init_finish, callback)
         return self
-
-    @property
-    def id(self):
-        return self._replace_id
 
     def new(self, summary, body, icon):
         def on_Notify_finish(self, result):
@@ -92,5 +99,6 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         id, signal_value = parameters.unpack()
         if id != self._replace_id:
            return
+        self.signals.emit(signal_name, signal_value)
         if signal_name == 'ActionInvoked':
             self._callbacks[signal_value]()
