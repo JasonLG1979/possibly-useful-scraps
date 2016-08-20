@@ -1,5 +1,5 @@
 #possibly-useful-scraps
-A collection of possibly useful scraps so far containing a couple PyGObject scripts.
+A collection of possibly useful scraps so far containing a few PyGObject scripts.
 
 #SimpleDBusNotifications:
 
