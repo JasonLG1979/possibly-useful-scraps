@@ -11,6 +11,8 @@ It is up to the application to decide/handle the synchronousity
 of the actions callbacks. They will by default be called synchronously
 in the main thread.
 
+see the [wiki](https://github.com/JasonLG1979/possibly-useful-scraps/wiki/SimpleDBusNotifications) for documentation.
+
 #GLib_async:
 
 A decorator that can be used on free functions so they will be called asynchronously.(using python threads)
