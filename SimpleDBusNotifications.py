@@ -17,7 +17,7 @@
 #See <https://developer.gnome.org/notification-spec/> for documentation.
 
 from gi.repository import GObject, GLib, Gio
- 
+
 class Signals(GObject.GObject):
 
     __gsignals__ = {
