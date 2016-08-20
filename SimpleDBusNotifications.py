@@ -72,16 +72,18 @@ class SimpleDBusNotifications(Gio.DBusProxy):
                            'vendor': info[1],
                            'version': info[2],
                            'spec_version': info[3],
-            }            
+            }
+
+            self._replace_id = 0
+            self._actions = []
+            self._callbacks = {}
+            self._hints = {}
+            self._app_name = app_name
+            self.signals = Signals()
+            
             callback(server_info, caps)
 
-        self = cls()
-        self._replace_id = 0
-        self._actions = []
-        self._callbacks = {}
-        self._hints = {}
-        self._app_name = app_name
-        self.signals = Signals()     
+        self = cls()     
         self.init_async(GLib.PRIORITY_DEFAULT, None, on_init_finish, callback)
         return self
 
