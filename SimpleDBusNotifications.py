@@ -14,7 +14,9 @@
 #with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
 
-#See <https://developer.gnome.org/notification-spec/> for documentation.
+#See <https://developer.gnome.org/notification-spec/> and 
+#<https://github.com/JasonLG1979/possibly-useful-scraps/wiki/SimpleDBusNotifications>
+#for documentation.
 
 from gi.repository import GObject, GLib, Gio
 
