@@ -27,7 +27,7 @@ class GLibAsyncDemo(Gtk.Window):
         vbox.pack_start(self.button, False, False, 0)
         self.notification = SimpleDBusNotifications.async_init('Async Demo', self.init_notifications_finish)
 
-    def init_notifications_finish(self, caps):         
+    def init_notifications_finish(self, info, caps):         
         self.async_sleep()
         self.clock_toggle()
 
