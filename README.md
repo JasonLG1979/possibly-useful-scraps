@@ -30,3 +30,17 @@ Into:
     def do_in_main_thread(arg1, arg2, kwarg1=1, kwarg2=2):
         #do awesome stuff
 ```
+
+#GObject_signal_block:
+
+Stops a signal handler from recursively calling it's self.
+
+<i>Example:</i>
+```python
+    self.my_signal_handler = self.obj.connect('my-signal', self.on_my_signal, 'my-signal')
+
+    @GObject_signal_block
+    def on_my_signal(self, obj, signal, signal_name):
+        #do stuff that would cause obj to emit 'my-signal' again
+```
+
