@@ -17,7 +17,7 @@
 #See <https://developer.gnome.org/notification-spec/> for documentation.
 
 from gi.repository import GObject, GLib, Gio
-
+ 
 class Signals(GObject.GObject):
 
     __gsignals__ = {
@@ -52,7 +52,26 @@ class SimpleDBusNotifications(Gio.DBusProxy):
             )
 
         def on_GetCapabilities_finish(self, result, callback):
-            callback(self.call_finish(result).unpack()[0])
+            caps = self.call_finish(result).unpack()[0]
+            user_data = callback, caps
+            self.call('GetServerInformation',
+                      None,
+                      Gio.DBusCallFlags.NONE,
+                      -1,
+                      None,
+                      on_GetServerInformation_finish,
+                      user_data,
+            )
+
+        def on_GetServerInformation_finish(self, result, user_data):
+            callback, caps = user_data
+            info = self.call_finish(result).unpack()
+            server_info = {'name': info[0],
+                           'vendor': info[1],
+                           'version': info[2],
+                           'spec_version': info[3],
+            }            
+            callback(server_info, caps)
 
         self = cls()
         self._replace_id = 0
