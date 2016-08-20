@@ -30,20 +30,27 @@ class NotificationsDemo(Gtk.Window):
         vbox.pack_start(self.button, True, True, 0)
 
     def init_notifications(self):
-        def on_init_finish(caps):
-            self.supports_actions = 'actions' in caps
+        def on_init_finish(server_info, capabilities):
+            self.supports_actions = 'actions' in capabilities
+            print('Server information:')
+            for key, value in server_info.items():
+                print(key, value)
+            print('\n')
+            print('Server Capabilities:')
+            for capability in capabilities:
+                print(capability)
 
         self.notification = SimpleDBusNotifications.async_init('Notifications Demo', on_init_finish)
 
     def set_animals(self):
         prev_animal_one = self.animal_one
-        for i in range(len(self.animals)):
+        while True:
             animal = random.choice(self.animals)
             if animal != self.animal_one and animal != self.animal_two:
                 self.animal_one = animal
                 break
 
-        for i in range(len(self.animals)):
+        while True:
             animal = random.choice(self.animals)
             if animal != self.animal_one and animal != self.animal_two and animal != prev_animal_one:
                 self.animal_two = animal
