@@ -20,17 +20,13 @@
 
 from gi.repository import GObject, GLib, Gio
 
-class Signals(GObject.GObject):
+class SimpleDBusNotifications(Gio.DBusProxy):
 
     __gsignals__ = {
         'ActionInvoked': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
         'NotificationClosed': (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
 
-    def __init__(self):
-        super().__init__()
-
-class SimpleDBusNotifications(Gio.DBusProxy):
     def __init__(self, **kwargs):
         super().__init__(
             g_bus_type=Gio.BusType.SESSION,
@@ -79,7 +75,6 @@ class SimpleDBusNotifications(Gio.DBusProxy):
             self._callbacks = {}
             self._hints = {}
             self._app_name = app_name
-            self.signals = Signals()
             
             callback(server_info, caps)
 
@@ -122,6 +117,10 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         id, signal_value = parameters.unpack()
         if id != self._replace_id:
            return
-        self.signals.emit(signal_name, signal_value)
+        self.emit(signal_name, signal_value)
         if signal_name == 'ActionInvoked':
             self._callbacks[signal_value]()
+
+    def __getattr__(self, name):
+        # pygobject ships an override that breaks our usage
+        return object.__getattr__(self, name)
