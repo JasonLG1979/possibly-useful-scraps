@@ -45,7 +45,6 @@ class Worker:
                 error = 'Unhandled exception in async_queue call:\n{}'.format(e.traceback)
             if on_done:
                 GLib.idle_add(lambda: on_done(result, error), priority=priority)
-            self.queue.task_done()
 
 worker = Worker()
 
