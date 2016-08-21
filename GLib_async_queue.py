@@ -22,7 +22,7 @@
 import threading
 import queue
 import traceback
-from gi.repository import GObject, GLib
+from gi.repository import GLib
 
 __all__ = ['GLib_async_queue']
 
