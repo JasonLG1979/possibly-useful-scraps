@@ -11,7 +11,7 @@ A decorator that can be used on free functions so they will be called asynchrono
 
 #GLib_async_queue:
 
-Works very similar to GLib_async except where GLib_async spawns a new thread for each call GLib_async_queue has just one worker thread. So it can be said that while it operates asynchronously to the main thread all decorated functions are synchronous as a whole group and are excuted in FIFO order.
+Works very similar to GLib_async except where GLib_async spawns a new thread for each call GLib_async_queue has just one worker thread. So it can be said that while it operates asynchronously to the main thread all decorated functions are synchronous as a whole group and are excuted in FIFO order via a queue.
 
 #GLib_idle:
 GLib.idle_add decorator.
