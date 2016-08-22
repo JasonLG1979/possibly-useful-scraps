@@ -19,6 +19,7 @@
 #gobject_worker.py Copyright (C) 2010-2012 Kevin Mehall <km@kevinmehall.net>
 #License GNU General Public License version 3.
 
+import time
 import threading
 import queue
 import traceback
@@ -26,29 +27,16 @@ from gi.repository import GLib
 
 __all__ = ['GLib_async_queue']
 
-class MyPriorityQueue(queue.PriorityQueue):
-    def __init__(self):
-        super().__init__()
-        self.counter = 0
-
-    def put(self, priority, f, args, kwargs, on_done):
-        queue.PriorityQueue.put(self, (priority, self.counter, f, args, kwargs, on_done))
-        self.counter += 1
-
-    def get(self, *args, **kwargs):
-        priority, _, f, args, kwargs, on_done = queue.PriorityQueue.get(self, *args, **kwargs)
-        return priority, f, args, kwargs, on_done
-
 class Worker(threading.Thread):
     def __init__(self):
         super().__init__()
-        self.queue = MyPriorityQueue()
+        self.queue = queue.PriorityQueue()
         self.daemon = True
         self.start()
         
     def run(self):
         while True:
-            priority, f, args, kwargs, on_done = self.queue.get()
+            priority, _, f, args, kwargs, on_done = self.queue.get()
             result = None
             error = None
             try:
@@ -64,6 +52,7 @@ worker = Worker()
 def GLib_async_queue(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
-            worker.queue.put(priority, f, args, kwargs, on_done)
+            worker.queue.put((priority, time.time(), f, args, kwargs, on_done))
         return run
     return wrapper
+
