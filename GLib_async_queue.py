@@ -26,23 +26,36 @@ from gi.repository import GLib
 
 __all__ = ['GLib_async_queue']
 
-class Worker:
+class MyPriorityQueue(queue.PriorityQueue):
     def __init__(self):
-        self.thread = threading.Thread(target=self._run)
-        self.thread.daemon = True
-        self.queue = queue.Queue()
-        self.thread.start()
+        super().__init__()
+        self.counter = 0
+
+    def put(self, priority, f, args, kwargs, on_done):
+        queue.PriorityQueue.put(self, (priority, self.counter, f, args, kwargs, on_done))
+        self.counter += 1
+
+    def get(self, *args, **kwargs):
+        priority, _, f, args, kwargs, on_done = queue.PriorityQueue.get(self, *args, **kwargs)
+        return priority, f, args, kwargs, on_done
+
+class Worker(threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self.queue = MyPriorityQueue()
+        self.daemon = True
+        self.start()
         
-    def _run(self):
+    def run(self):
         while True:
-            f, args, kwargs, on_done, priority = self.queue.get()
+            priority, f, args, kwargs, on_done = self.queue.get()
             result = None
             error = None
             try:
                 result = f(*args, **kwargs)
             except Exception as e:
                 e.traceback = traceback.format_exc()
-                error = 'Unhandled exception in async_queue call:\n{}'.format(e.traceback)
+                error = 'Unhandled exception in GLib_async_queue call:\n{}'.format(e.traceback)
             if on_done:
                 GLib.idle_add(lambda: on_done(result, error), priority=priority)
 
@@ -51,6 +64,6 @@ worker = Worker()
 def GLib_async_queue(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
-            worker.queue.put((f, args, kwargs, on_done, priority))
+            worker.queue.put(priority, f, args, kwargs, on_done)
         return run
     return wrapper
