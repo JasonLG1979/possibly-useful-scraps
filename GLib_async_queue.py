@@ -45,7 +45,7 @@ class Worker(threading.Thread):
                 e.traceback = traceback.format_exc()
                 error = 'Unhandled exception in GLib_async_queue call:\n{}'.format(e.traceback)
             if on_done:
-                GLib.idle_add(lambda: on_done(result, error), priority=priority)
+                GLib.idle_add(on_done, result, error, priority=priority)
 
 worker = Worker()
 
@@ -55,4 +55,3 @@ def GLib_async_queue(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
             worker.queue.put((priority, time.time(), f, args, kwargs, on_done))
         return run
     return wrapper
-
