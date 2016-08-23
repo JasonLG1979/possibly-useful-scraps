@@ -105,7 +105,7 @@ class NotificationsDemo(Gtk.Window):
         self.notification.clear_actions()
         summary = 'You have made your choice.'
         body = 'You prefer {}.'.format(self.selected_animal)
-        icon = 'dialog-information'
+        icon = 'dialog-information-symbolic'
         # If notifications were not async(non-blocking)
         # you'd be able to see the label from the callbacks
         # until it unblocked.
