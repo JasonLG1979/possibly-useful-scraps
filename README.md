@@ -16,12 +16,18 @@ A single worker thread that runs asynchronous to the main thread that uses a hyb
 An example output of [GLib_async_queue_test.py](https://github.com/JasonLG1979/possibly-useful-scraps/blob/master/GLib_async_queue_test.py)
 
 ```bash
-High priority: Call order 2, return order 1.
-High priority: Call order 3, return order 2.
-Default priority: Call order 4, return order 3.
-Default priority: Call order 6, return order 4.
-Low priority: Call order 1, return order 5.
-Low priority: Call order 5, return order 6.
+High priority: Call order 1, return order 1.
+High priority: Call order 6, return order 2.
+High priority: Call order 10, return order 3.
+High priority: Call order 11, return order 4.
+Default priority: Call order 3, return order 5.
+Default priority: Call order 5, return order 6.
+Default priority: Call order 7, return order 7.
+Default priority: Call order 9, return order 8.
+Low priority: Call order 2, return order 9.
+Low priority: Call order 4, return order 10.
+Low priority: Call order 8, return order 11.
+Low priority: Call order 12, return order 12.
 ```
 
 #GLib_idle:
