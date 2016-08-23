@@ -19,7 +19,6 @@
 #gobject_worker.py Copyright (C) 2010-2012 Kevin Mehall <km@kevinmehall.net>
 #License GNU General Public License version 3.
 
-import time
 import threading
 import queue
 import traceback
@@ -31,6 +30,7 @@ class Worker(threading.Thread):
     def __init__(self):
         super().__init__()
         self.queue = queue.PriorityQueue()
+        self.fifo_priority = 0
         self.daemon = True
         self.start()
         
@@ -47,11 +47,15 @@ class Worker(threading.Thread):
             if on_done:
                 GLib.idle_add(on_done, result, error, priority=priority)
 
+    def queue_task(self, priority, f, args, kwargs, on_done):
+        self.fifo_priority += 1
+        self.queue.put((priority, self.fifo_priority, f, args, kwargs, on_done))
+
 worker = Worker()
 
 def GLib_async_queue(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
-            worker.queue.put((priority, time.time(), f, args, kwargs, on_done))
+            worker.queue_task(priority, f, args, kwargs, on_done)
         return run
     return wrapper
