@@ -64,11 +64,11 @@ class NotificationsDemo(Gtk.Window):
             self.set_actions()
             summary = 'Your notification server supports actions.'
             body = 'Which do you prefer?'
-            icon = 'dialog-question'
+            icon = 'dialog-question-symbolic'
         else:
             summary = 'Your notification server does not support actions.' 
             body = 'I guess we will never know which animals you prefer.'
-            icon = 'dialog-error'
+            icon = 'dialog-error-symbolic'
         self.notification.new(summary, body, icon)
         if self.selected_animal:
             self.label.set_label('Well you don\'t like {}, how about one of these?'.format(self.selected_animal))
