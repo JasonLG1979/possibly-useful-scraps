@@ -14,7 +14,6 @@
 #with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
 
-import time
 import random
 from GLib_async_queue import *
 import gi
@@ -26,6 +25,7 @@ class QueueTest(Gtk.Window):
         Gtk.Window.__init__(self, title='Queue Test')
         self.call_order_counter = 0
         self.return_order_counter = 0
+        self.complete_message = []
         self.set_default_size(350, -1)
         self.set_resizable(False)
         self.set_border_width(10)
@@ -35,29 +35,37 @@ class QueueTest(Gtk.Window):
         self.set_titlebar(self.headerbar)
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(vbox)
-        self.button = Gtk.Button.new_with_label('Print Queue Test Results')
+        self.button = Gtk.Button.new_with_label('Get Queue Test Results')
         self.button.connect('clicked', self.async_queue_test)
         vbox.pack_start(self.button, False, False, 0)
+        self.label = Gtk.Label()
+        vbox.pack_start(self.label, True, True, 0)
 
     def async_queue_test(self, *ignore):
-        def print_message(result, error):
+        self.call_order_counter = 0
+        self.return_order_counter = 0
+        self.label.set_label('')
+        self.complete_message = []
+
+        def get_message(result, error):
             priority, order_called = result
             self.return_order_counter += 1
-            print('{} priority: Call order {}, return order {}.'.format(priority, order_called, self.return_order_counter))
+            message = '{} priority: Call order {}, return order {}.'.format(priority, order_called, self.return_order_counter)
+            self.complete_message.append(message)
+            label_text = '\n'.join(self.complete_message)
+            self.label.set_label(label_text)           
+            
 
-        @GLib_async_queue(on_done=print_message, priority=GLib.PRIORITY_HIGH)
+        @GLib_async_queue(on_done=get_message, priority=GLib.PRIORITY_HIGH)
         def say_high(order_called):
-            time.sleep(random.randint(1, 5))
             return 'High', order_called
 
-        @GLib_async_queue(on_done=print_message, priority=GLib.PRIORITY_DEFAULT)
+        @GLib_async_queue(on_done=get_message, priority=GLib.PRIORITY_DEFAULT)
         def say_default(order_called):
-            time.sleep(random.randint(1, 5))
             return 'Default', order_called
 
-        @GLib_async_queue(on_done=print_message, priority=GLib.PRIORITY_LOW)
+        @GLib_async_queue(on_done=get_message, priority=GLib.PRIORITY_LOW)
         def say_low(order_called):
-            time.sleep(random.randint(1, 5))
             return 'Low', order_called
 
         def low():
