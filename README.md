@@ -11,7 +11,18 @@ A decorator that can be used on free functions so they will be called asynchrono
 
 #GLib_async_queue:
 
-Works very similar to GLib_async except where GLib_async spawns a new thread for each call GLib_async_queue has just one worker thread. So it can be said that while it operates asynchronously to the main thread all decorated functions are synchronous as a whole group and are excuted in FIFO order via a queue.
+A single worker thread that runs asynchronous to the main thread that uses a hybrid FIFO/Priority based queue. Tasks can be asigned a Priority via the optional priority kwarg. (GLib.PRIORITY_DEFAULT_IDLE is the deafult priority) Tasks will be excuted in the order of priority, tasks with the same priority will be excuted FIFO.
+
+An example output of [GLib_async_queue_test.py](https://github.com/JasonLG1979/possibly-useful-scraps/blob/master/GLib_async_queue_test.py)
+
+```bash
+High priority: Call order 2, return order 1.
+High priority: Call order 3, return order 2.
+Default priority: Call order 4, return order 3.
+Default priority: Call order 6, return order 4.
+Low priority: Call order 1, return order 5.
+Low priority: Call order 5, return order 6.
+```
 
 #GLib_idle:
 GLib.idle_add decorator.
