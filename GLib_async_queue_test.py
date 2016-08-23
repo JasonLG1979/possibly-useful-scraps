@@ -13,6 +13,7 @@
 #You should have received a copy of the GNU General Public License along 
 #with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import time
 import random
 from GLib_async_queue import *
@@ -59,31 +60,19 @@ class QueueTest(Gtk.Window):
             time.sleep(random.randint(1, 5))
             return 'Low', order_called
 
-        def low_one():
+        def low():
             self.call_order_counter += 1
             say_low(self.call_order_counter)
 
-        def low_two():
-            self.call_order_counter += 1
-            say_low(self.call_order_counter)
-
-        def default_one():
+        def default():
             self.call_order_counter += 1
             say_default(self.call_order_counter)
 
-        def default_two():
-            self.call_order_counter += 1
-            say_default(self.call_order_counter)
-
-        def high_one():
+        def high():
             self.call_order_counter += 1
             say_high(self.call_order_counter)
 
-        def high_two():
-            self.call_order_counter += 1
-            say_high(self.call_order_counter)
-
-        test_calls = [low_one, low_two, default_one, default_two, high_one, high_two]
+        test_calls = [low, low, low, low, default, default, default, default, high, high, high, high]
 
         random.shuffle(test_calls)
 
