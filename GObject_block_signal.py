@@ -19,8 +19,8 @@ from gi.repository import GObject
 def GObject_block_signal(signal_name):
     def wrapper(f):
         def run(self, obj, signal):
-            signal_id = GObject.signal_lookup(signal_name, obj)
-            handler_id = GObject.signal_handler_find(obj, GObject.SignalMatchType.ID, signal_id, 0)
+            signal_id, detail = GObject.signal_parse_name(signal_name, obj, False)
+            handler_id = GObject.signal_handler_find(obj, GObject.SignalMatchType.DETAIL, signal_id, detail)
             with obj.handler_block(handler_id):
                 f(self, obj, signal)
         return run
