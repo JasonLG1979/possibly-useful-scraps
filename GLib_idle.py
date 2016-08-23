@@ -16,7 +16,9 @@
 
 from gi.repository import GLib
 
-def GLib_idle(f):
-    def wrapper(*args, **kwargs):
-        GLib.idle_add(lambda: f(*args, **kwargs))
+def GLib_idle(priority=GLib.PRIORITY_DEFAULT_IDLE):
+    def wrapper(f):
+        def run(*args, **kwargs):
+            GLib.idle_add(lambda: f(*args, **kwargs), priority=priority)
+        return run
     return wrapper
