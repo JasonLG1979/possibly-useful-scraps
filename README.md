@@ -46,16 +46,16 @@ Into:
         #do awesome stuff
 ```
 
-#GObject_signal_block:
+#GObject_block_signal:
 
 Stops a signal handler from recursively calling it's self.
 
 <i>Example:</i>
 ```python
-    self.my_signal_handler = self.obj.connect('my-signal', self.on_my_signal, 'my-signal')
+    self.my_signal_handler = self.obj.connect('my-signal', self.on_my_signal)
 
-    @GObject_signal_block
-    def on_my_signal(self, obj, signal, signal_name):
+    @GObject_block_signal('my-signal')
+    def on_my_signal(self, obj, signal):
         #do stuff that would cause obj to emit 'my-signal' again
 ```
 
