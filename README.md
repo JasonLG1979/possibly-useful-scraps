@@ -41,7 +41,7 @@ Turns:
 
 Into:
 ```python
-    @GLib_idle
+    @GLib_idle()
     def do_in_main_thread(arg1, arg2, kwarg1=1, kwarg2=2):
         #do awesome stuff
 ```
