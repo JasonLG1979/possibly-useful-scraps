@@ -34,7 +34,7 @@ def GLib_async(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
                     result = f(*args, **kwargs)
                 except Exception as e:
                     e.traceback = traceback.format_exc()
-                    error = 'Unhandled exception in async call:\n{}'.format(e.traceback)
+                    error = 'Unhandled exception in GLib_async call:\n{}'.format(e.traceback)
                 if on_done:
                     GLib.idle_add(on_done, result, error, priority=priority)
 
