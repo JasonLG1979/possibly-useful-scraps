@@ -36,26 +36,29 @@ class Worker(threading.Thread):
         
     def run(self):
         while True:
-            priority, _, f, args, kwargs, on_done = self.queue.get()
+            priority, _, f, args, kwargs, on_success, on_failure = self.queue.get()
             result = None
             error = None
             try:
                 result = f(*args, **kwargs)
+                if on_success is not None:
+                    GLib.idle_add(on_success, result, priority=priority)
             except Exception as e:
-                e.traceback = traceback.format_exc()
-                error = 'Unhandled exception in GLib_async_queue call:\n{}'.format(e.traceback)
-            if on_done:
-                GLib.idle_add(on_done, result, error, priority=priority)
+                if on_failure is not None:
+                    e.traceback = traceback.format_exc()
+                    error = 'Unhandled exception in GLib_async_queue call:\n{}'.format(e.traceback)
+                    GLib.idle_add(on_failure, error, priority=priority)
 
-    def queue_task(self, priority, f, args, kwargs, on_done):
+    def queue_task(self, priority, f, args, kwargs, on_success, on_failure):
         self.fifo_priority += 1
-        self.queue.put((priority, self.fifo_priority, f, args, kwargs, on_done))
+        self.queue.put((priority, self.fifo_priority, f, args, kwargs, on_success, on_failure))
 
 worker = Worker()
 
-def GLib_async_queue(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
+def GLib_async_queue(on_success=None, on_failure=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
-            worker.queue_task(priority, f, args, kwargs, on_done)
+            worker.queue_task(priority, f, args, kwargs, on_success, on_failure)
         return run
     return wrapper
+
