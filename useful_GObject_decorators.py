@@ -34,7 +34,7 @@ def GLib_async(on_success=None, on_failure=None, priority=GLib.PRIORITY_DEFAULT_
                 priority, f, args, kwargs, on_success, on_failure = args
                 try:
                     result = f(*args, **kwargs)
-                    if on_success is not None:
+                    if on_success is not None and result is not None:
                         GLib.idle_add(on_success, result, priority=priority)
                 except Exception as e:
                     if on_failure is not None:
@@ -79,7 +79,7 @@ class Worker(threading.Thread):
             priority, _, f, args, kwargs, on_success, on_failure = self.queue.get()
             try:
                 result = f(*args, **kwargs)
-                if on_success is not None:
+                if on_success is not None and result is not None:
                     GLib.idle_add(on_success, result, priority=priority)
             except Exception as e:
                 if on_failure is not None:
