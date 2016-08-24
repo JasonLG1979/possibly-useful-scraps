@@ -37,8 +37,6 @@ class Worker(threading.Thread):
     def run(self):
         while True:
             priority, _, f, args, kwargs, on_success, on_failure = self.queue.get()
-            result = None
-            error = None
             try:
                 result = f(*args, **kwargs)
                 if on_success is not None:
