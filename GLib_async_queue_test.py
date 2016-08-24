@@ -47,24 +47,26 @@ class QueueTest(Gtk.Window):
         self.label.set_label('')
         self.complete_message = []
 
-        def get_message(result, error):
+        def get_message(result):
             priority, order_called = result
             self.return_order_counter += 1
             message = '{} priority: Call order {}, return order {}.'.format(priority, order_called, self.return_order_counter)
             self.complete_message.append(message)
             label_text = '\n'.join(self.complete_message)
-            self.label.set_label(label_text)           
-            
+            self.label.set_label(label_text)
 
-        @GLib_async_queue(on_done=get_message, priority=GLib.PRIORITY_HIGH)
+        def get_error(error):
+            self.label.set_label(error)
+
+        @GLib_async_queue(on_success=get_message, on_failure=get_error, priority=GLib.PRIORITY_HIGH)
         def say_high(order_called):
             return 'High', order_called
 
-        @GLib_async_queue(on_done=get_message, priority=GLib.PRIORITY_DEFAULT)
+        @GLib_async_queue(on_success=get_message, on_failure=get_error, priority=GLib.PRIORITY_DEFAULT)
         def say_default(order_called):
             return 'Default', order_called
 
-        @GLib_async_queue(on_done=get_message, priority=GLib.PRIORITY_LOW)
+        @GLib_async_queue(on_success=get_message, on_failure=get_error, priority=GLib.PRIORITY_LOW)
         def say_low(order_called):
             return 'Low', order_called
 
