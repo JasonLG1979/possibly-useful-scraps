@@ -43,17 +43,22 @@ class NotificationsDemo(Gtk.Window):
         self.button = Gtk.Button.new_with_label('Ask the most import of all questions...')
         self.button.connect('clicked', self.on_question_clicked)
         vbox.pack_start(self.button, True, True, 0)
+        self.label2 = Gtk.Label()
+        self.label2.set_use_markup(True)
+        vbox.pack_start(self.label2, True, True, 0)
 
     def init_notifications(self):
         def on_init_finish(server_info, capabilities):
             self.supports_actions = 'actions' in capabilities
-            print('Server information:')
+            label_text = []
+            label_text.append('<b><big>Server information:</big></b>')
             for key, value in server_info.items():
-                print(key, value)
-            print('\n')
-            print('Server Capabilities:')
+                label_text.append('<small>{}: {}</small>'.format(key, value))
+            label_text.append('\n<b><big>Server Capabilities:</big></b>')
             for capability in capabilities:
-                print(capability)
+                label_text.append('<small>{}</small>'.format(capability))
+            label_text = '\n'.join(label_text)
+            self.label2.set_label(label_text)
 
         self.notification = SimpleDBusNotifications.async_init('Notifications Demo', on_init_finish)
 
