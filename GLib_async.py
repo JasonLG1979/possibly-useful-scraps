@@ -23,22 +23,22 @@ import threading
 import traceback
 from gi.repository import GLib
 
-def GLib_async(on_done=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
+def GLib_async(on_success=None, on_failure=None, priority=GLib.PRIORITY_DEFAULT_IDLE):
     def wrapper(f):
         def run(*args, **kwargs):
             def in_thread(args):
-                f, args, kwargs, on_done, priority = args
-                result = None
-                error = None
+                priority, f, args, kwargs, on_success, on_failure = args
                 try:
                     result = f(*args, **kwargs)
+                    if on_success is not None:
+                        GLib.idle_add(on_success, result, priority=priority)
                 except Exception as e:
-                    e.traceback = traceback.format_exc()
-                    error = 'Unhandled exception in GLib_async call:\n{}'.format(e.traceback)
-                if on_done:
-                    GLib.idle_add(on_done, result, error, priority=priority)
+                    if on_failure is not None:
+                        e.traceback = traceback.format_exc()
+                        error = 'Unhandled exception in GLib_async call:\n{}'.format(e.traceback)
+                        GLib.idle_add(on_failure, error, priority=priority)
 
-            args = f, args, kwargs, on_done, priority
+            args = priority, f, args, kwargs, on_success, on_failure
             thread = threading.Thread(target=in_thread, args=(args,))
             thread.daemon = True
             thread.start()
