@@ -82,7 +82,7 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         self.init_async(GLib.PRIORITY_DEFAULT, None, on_init_finish, callback)
         return self
 
-    def new(self, summary, body, icon):
+    def show_new(self, summary, body, icon):
         def on_Notify_finish(self, result):
             self._replace_id = self.call_finish(result).unpack()[0]
 
