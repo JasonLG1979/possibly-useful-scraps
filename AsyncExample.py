@@ -77,7 +77,7 @@ class GLibAsyncDemo(Gtk.Window):
         summary = 'Just Woke Back Up.'
         body = 'Slept for about {} seconds that time.'.format(secs)
         icon = 'dialog-information-symbolic'
-        self.notification.new(summary, body, icon)
+        self.notification.show_new(summary, body, icon)
         self.async_sleep()
 
 if __name__ == '__main__':
