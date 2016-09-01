@@ -89,7 +89,7 @@ class NotificationsDemo(Gtk.Window):
             summary = 'Your notification server does not support actions.' 
             body = 'I guess we will never know which animals you prefer.'
             icon = 'dialog-error-symbolic'
-        self.notification.new(summary, body, icon)
+        self.notification.show_new(summary, body, icon)
         if self.selected_animal:
             self.label.set_label('Well you don\'t like {}, how about one of these?'.format(self.selected_animal))
             self.button.set_label('No Those Suck To!!! Ask Me Again...')
@@ -129,7 +129,7 @@ class NotificationsDemo(Gtk.Window):
         # If notifications were not async(non-blocking)
         # you'd be able to see the label from the callbacks
         # until it unblocked.
-        self.notification.new(summary, body, icon)
+        self.notification.show_new(summary, body, icon)
         self.button.set_label('No {} Suck!!! Ask Me Again...'.format(self.selected_animal))
         self.label.set_label('Are you sure you prefer {}?'.format(self.selected_animal))
 
