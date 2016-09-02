@@ -20,6 +20,12 @@
 
 from gi.repository import GObject, GLib, Gio
 
+# Notification Closed Reason Constants
+NOTIFICATION_EXPIRED = 1
+NOTIFICATION_DISMISSED_BY_USER = 2
+NOTIFICATION_CLOSED_BY_CLOSENOTIFICATION = 3
+NOTIFICATION_CLOSED_BY_UNDEFINED_RESERVED_REASONS = 4
+
 class SimpleDBusNotifications(Gio.DBusProxy):
 
     __gsignals__ = {
@@ -70,6 +76,7 @@ class SimpleDBusNotifications(Gio.DBusProxy):
                            'spec_version': info[3],
             }
 
+            self._last_signal = None
             self._replace_id = 0
             self._actions = []
             self._callbacks = {}
@@ -115,8 +122,14 @@ class SimpleDBusNotifications(Gio.DBusProxy):
 
     def do_g_signal(self, sender_name, signal_name, parameters):
         id, signal_value = parameters.unpack()
+        # We only care about our notifications.
         if id != self._replace_id:
-           return
+            return
+        # In GNOME Shell at least this stops multiple
+        # redundant NotificationClosed signals from being emmitted.   
+        if (id, signal_value) == self._last_signal:
+            return
+        self._last_signal = id, signal_value
         self.emit(signal_name, signal_value)
         if signal_name == 'ActionInvoked':
             self._callbacks[signal_value]()
