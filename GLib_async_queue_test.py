@@ -94,7 +94,7 @@ class QueueTest(Gtk.Window):
         for i in range(random.randint(2, 24)):
             random_call = random.choice([high, default, low])
             self.call_order_counter += 1
-            test_call = random_call(self.call_order_counter, random.uniform(0.1, 1.0))
+            random_call(self.call_order_counter, random.uniform(0.1, 1.0))
 
     def update_time(self):
         self.time_sec += 1
