@@ -14,6 +14,7 @@
 #with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
 
+import time
 import random
 from GLib_async_queue import *
 import gi
@@ -26,12 +27,13 @@ class QueueTest(Gtk.Window):
         self.call_order_counter = 0
         self.return_order_counter = 0
         self.complete_message = []
-        self.set_default_size(350, -1)
+        self.set_default_size(500, -1)
         self.set_resizable(False)
         self.set_border_width(10)
         self.headerbar = Gtk.HeaderBar()
         self.headerbar.set_show_close_button(True)
         self.headerbar.set_title('Queue Test')
+        self.headerbar.set_subtitle('00:00:00')
         self.set_titlebar(self.headerbar)
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(vbox)
@@ -40,54 +42,70 @@ class QueueTest(Gtk.Window):
         vbox.pack_start(self.button, False, False, 0)
         self.label = Gtk.Label()
         vbox.pack_start(self.label, True, True, 0)
+        self.time_sec = 0
+        GLib.timeout_add(1000, self.update_time)
 
     def async_queue_test(self, *ignore):
+        self.button.set_sensitive(False)
         self.call_order_counter = 0
         self.return_order_counter = 0
         self.label.set_label('')
         self.complete_message = []
 
         def get_message(result):
-            priority, order_called = result
+            priority, order_called, time_slept = result
             self.return_order_counter += 1
-            message = '{} priority: Call order {}, return order {}.'.format(priority, order_called, self.return_order_counter)
-            self.complete_message.append(message)
+            self.complete_message.append('{} priority: Call order {}, '
+                                         'return order {}. Slept for {} secs'.format(priority,
+                                                                                     order_called,
+                                                                                     self.return_order_counter,
+                                                                                     time_slept),
+            )
+
             label_text = '\n'.join(self.complete_message)
             self.label.set_label(label_text)
+            if self.return_order_counter == self.call_order_counter:
+                self.button.set_sensitive(True)
 
         def get_error(error):
             self.label.set_label(error)
 
         @GLib_async_queue(on_success=get_message, on_failure=get_error, priority=GLib.PRIORITY_HIGH)
-        def say_high(order_called):
-            return 'High', order_called
+        def high(order_called, sleep_time):
+            went_to_sleep = time.time()
+            time.sleep(sleep_time)
+            time_slept = round(time.time() - went_to_sleep, 3)
+            return 'High', order_called, time_slept
 
         @GLib_async_queue(on_success=get_message, on_failure=get_error, priority=GLib.PRIORITY_DEFAULT)
-        def say_default(order_called):
-            return 'Default', order_called
+        def default(order_called, sleep_time):
+            went_to_sleep = time.time()
+            time.sleep(sleep_time)
+            time_slept = round(time.time() - went_to_sleep, 3)
+            return 'Default', order_called, time_slept
 
         @GLib_async_queue(on_success=get_message, on_failure=get_error, priority=GLib.PRIORITY_LOW)
-        def say_low(order_called):
-            return 'Low', order_called
+        def low(order_called, sleep_time):
+            went_to_sleep = time.time()
+            time.sleep(sleep_time)
+            time_slept = round(time.time() - went_to_sleep, 3)
+            return 'Low', order_called, time_slept
 
-        def low():
+        for i in range(random.randint(2, 24)):
+            random_call = random.choice([high, default, low])
             self.call_order_counter += 1
-            say_low(self.call_order_counter)
+            test_call = random_call(self.call_order_counter, random.uniform(0.1, 1.0))
 
-        def default():
-            self.call_order_counter += 1
-            say_default(self.call_order_counter)
-
-        def high():
-            self.call_order_counter += 1
-            say_high(self.call_order_counter)
-
-        test_calls = [low, low, low, low, default, default, default, default, high, high, high, high]
-
-        random.shuffle(test_calls)
-
-        for call in test_calls:
-            call()
+    def update_time(self):
+        self.time_sec += 1
+        time_int = self.time_sec
+        s = time_int % 60
+        time_int //= 60
+        m = time_int % 60
+        time_int //= 60
+        h = time_int
+        self.headerbar.set_subtitle('{:02d}:{:02d}:{:02d}'.format(h, m, s))
+        return True
 
 if __name__ == '__main__':
     win = QueueTest()
