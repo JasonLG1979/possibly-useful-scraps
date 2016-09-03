@@ -20,7 +20,7 @@
 
 from gi.repository import GObject, GLib, Gio
 
-# Notification Closed Reason Constants
+# Notification Closed Reason Constants.
 NOTIFICATION_EXPIRED = 1
 NOTIFICATION_DISMISSED_BY_USER = 2
 NOTIFICATION_CLOSED_BY_CLOSENOTIFICATION = 3
@@ -126,7 +126,7 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         if id != self._replace_id:
             return
         # In GNOME Shell at least this stops multiple
-        # redundant NotificationClosed signals from being emmitted.   
+        # redundant 'NotificationClosed' signals from being emmitted.   
         if (id, signal_value) == self._last_signal:
             return
         self._last_signal = id, signal_value
@@ -135,5 +135,5 @@ class SimpleDBusNotifications(Gio.DBusProxy):
             self._callbacks[signal_value]()
 
     def __getattr__(self, name):
-        # pygobject ships an override that breaks our usage
+        # PyGObject ships an override that breaks our usage.
         return object.__getattr__(self, name)
