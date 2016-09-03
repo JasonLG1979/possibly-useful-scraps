@@ -105,6 +105,15 @@ class SimpleDBusNotifications(Gio.DBusProxy):
                   on_Notify_finish,
         )
 
+    def close(self):
+        self.call('CloseNotification',
+                  GLib.Variant('(u)', (self._replace_id,)),
+                  Gio.DBusCallFlags.NONE,
+                  -1,
+                  None,
+                  None,
+        )
+
     def add_action(self, action_id, label, callback):    
         self._actions += [action_id, label]
         self._callbacks[action_id] = callback
