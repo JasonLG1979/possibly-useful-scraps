@@ -18,19 +18,21 @@
 #<https://github.com/JasonLG1979/possibly-useful-scraps/wiki/SimpleDBusNotifications>
 #for documentation.
 
+from enum import Enum
 from gi.repository import GObject, GLib, Gio
 
 # Notification Closed Reason Constants.
-NOTIFICATION_EXPIRED = 1
-NOTIFICATION_DISMISSED_BY_USER = 2
-NOTIFICATION_CLOSED_BY_CLOSEMETHOD = 3
-NOTIFICATION_CLOSED_BY_UNDEFINED = 4
+class ClosedReason(Enum):
+    EXPIRED = 1
+    DISMISSED = 2
+    CLOSEMETHOD = 3
+    UNDEFINED = 4
 
 class SimpleDBusNotifications(Gio.DBusProxy):
 
     __gsignals__ = {
-        'ActionInvoked': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
-        'NotificationClosed': (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        'action-invoked': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_STRING,)),
+        'closed': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_PYOBJECT,)),
     }
 
     def __init__(self, **kwargs):
@@ -139,9 +141,11 @@ class SimpleDBusNotifications(Gio.DBusProxy):
         if (id, signal_value) == self._last_signal:
             return
         self._last_signal = id, signal_value
-        self.emit(signal_name, signal_value)
         if signal_name == 'ActionInvoked':
+            self.emit('action-invoked', signal_value)
             self._callbacks[signal_value]()
+        else:
+            self.emit('closed', ClosedReason(signal_value))
 
     def __getattr__(self, name):
         # PyGObject ships an override that breaks our usage.
