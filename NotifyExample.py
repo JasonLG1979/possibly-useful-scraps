@@ -18,7 +18,7 @@ import random
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from SimpleDBusNotifications import *
+from GioNotify import GioNotify
 
 class NotificationsDemo(Gtk.Window):
     def __init__(self):
@@ -60,7 +60,7 @@ class NotificationsDemo(Gtk.Window):
             label_text = '\n'.join(label_text)
             self.label2.set_label(label_text)
 
-        self.notification = SimpleDBusNotifications.async_init('Notifications Demo', on_init_finish)
+        self.notification = GioNotify.async_init('Notifications Demo', on_init_finish)
 
     def set_animals(self):
         prev_animal_one = self.animal_one
