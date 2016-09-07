@@ -3,6 +3,8 @@ A collection of possibly useful scraps so far containing a few PyGObject scripts
 
 #GioNotify:
 
+Very simple asynchronous desktop notifications with hint and actions support...
+
 see the [wiki](https://github.com/JasonLG1979/possibly-useful-scraps/wiki/GioNotify) for documentation.
 
 #GLib_async:
