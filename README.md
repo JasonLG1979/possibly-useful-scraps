@@ -1,7 +1,7 @@
 #possibly-useful-scraps
 A collection of possibly useful scraps so far containing a few PyGObject scripts.
 
-#SimpleDBusNotifications:
+#GioNotify:
 
 see the [wiki](https://github.com/JasonLG1979/possibly-useful-scraps/wiki/SimpleDBusNotifications) for documentation.
 
