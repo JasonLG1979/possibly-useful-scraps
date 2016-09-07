@@ -4,7 +4,7 @@ import random
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
-from SimpleDBusNotifications import *
+from GioNotify import GioNotify
 from GLib_async import *
 
 class GLibAsyncDemo(Gtk.Window):
@@ -25,7 +25,7 @@ class GLibAsyncDemo(Gtk.Window):
         self.button = Gtk.Button.new_with_label('Start Clock')
         self.button.connect('clicked', self.clock_toggle)
         vbox.pack_start(self.button, False, False, 0)
-        self.notification = SimpleDBusNotifications.async_init('Async Demo', self.init_notifications_finish)
+        self.notification = GioNotify.async_init('Async Demo', self.init_notifications_finish)
 
     def init_notifications_finish(self, info, caps):         
         self.async_sleep()
