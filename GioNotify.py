@@ -19,16 +19,17 @@
 #for documentation.
 
 from enum import Enum
+
 from gi.repository import GObject, GLib, Gio
 
-# Notification Closed Reason Constants.
-class ClosedReason(Enum):
-    EXPIRED = 1
-    DISMISSED = 2
-    CLOSEMETHOD = 3
-    UNDEFINED = 4
+class GioNotify(Gio.DBusProxy):
 
-class SimpleDBusNotifications(Gio.DBusProxy):
+    # Notification Closed Reason Constants.
+    class Closed(Enum):
+        REASON_EXPIRED = 1
+        REASON_DISMISSED = 2
+        REASON_CLOSEMETHOD = 3
+        REASON_UNDEFINED = 4
 
     __gsignals__ = {
         'action-invoked': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_STRING,)),
@@ -145,7 +146,7 @@ class SimpleDBusNotifications(Gio.DBusProxy):
             self.emit('action-invoked', signal_value)
             self._callbacks[signal_value]()
         else:
-            self.emit('closed', ClosedReason(signal_value))
+            self.emit('closed', GioNotify.Closed(signal_value))
 
     def __getattr__(self, name):
         # PyGObject ships an override that breaks our usage.
