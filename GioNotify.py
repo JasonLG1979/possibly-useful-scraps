@@ -15,7 +15,7 @@
 ### END LICENSE
 
 #See <https://developer.gnome.org/notification-spec/> and 
-#<https://github.com/JasonLG1979/possibly-useful-scraps/wiki/SimpleDBusNotifications>
+#<https://github.com/JasonLG1979/possibly-useful-scraps/wiki/GioNotify>
 #for documentation.
 
 from enum import Enum
