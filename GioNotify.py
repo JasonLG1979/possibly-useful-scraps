@@ -45,6 +45,14 @@ class GioNotify(Gio.DBusProxy):
             **kwargs
         )
 
+        self._last_signal = None
+        self._caps = None
+        self._server_info = None
+        self._replace_id = 0
+        self._actions = []
+        self._callbacks = {}
+        self._hints = {}
+
     @classmethod
     def async_init(cls, app_name, callback):
         def on_init_finish(self, result, callback):
@@ -73,24 +81,53 @@ class GioNotify(Gio.DBusProxy):
         def on_GetServerInformation_finish(self, result, user_data):
             callback, caps = user_data
             info = self.call_finish(result).unpack()
-            server_info = {'name': info[0],
-                           'vendor': info[1],
-                           'version': info[2],
-                           'spec_version': info[3],
+            self._server_info = {'name': info[0],
+                                 'vendor': info[1],
+                                 'version': info[2],
+                                 'spec_version': info[3],
             }
 
-            self._last_signal = None
-            self._replace_id = 0
-            self._actions = []
-            self._callbacks = {}
-            self._hints = {}
+            self._caps = caps
             self._app_name = app_name
-            
-            callback(server_info, caps)
+
+            callback(self._server_info, self._caps)
 
         self = cls()     
         self.init_async(GLib.PRIORITY_DEFAULT, None, on_init_finish, callback)
         return self
+
+    @classmethod
+    def sync_init(cls, app_name):
+        self = cls()     
+        self.init()
+        self._caps = self.call_sync('GetCapabilities',
+                                     None,
+                                     Gio.DBusCallFlags.NONE,
+                                     -1,
+                                     None).unpack()[0]
+
+        info = self.call_sync('GetServerInformation',
+                              None,
+                              Gio.DBusCallFlags.NONE,
+                              -1,
+                              None).unpack()
+
+        self._server_info = {'name': info[0],
+                             'vendor': info[1],
+                             'version': info[2],
+                             'spec_version': info[3],
+        }
+
+        self._app_name = app_name
+        return self
+
+    @property
+    def capabilities(self):
+        return self._caps
+
+    @property
+    def server_information(self):
+        return self._server_info
 
     def show_new(self, summary, body, icon):
         def on_Notify_finish(self, result):
