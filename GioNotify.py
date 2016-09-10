@@ -101,10 +101,10 @@ class GioNotify(Gio.DBusProxy):
         self = cls()     
         self.init()
         self._caps = self.call_sync('GetCapabilities',
-                                     None,
-                                     Gio.DBusCallFlags.NONE,
-                                     -1,
-                                     None).unpack()[0]
+                                    None,
+                                    Gio.DBusCallFlags.NONE,
+                                    -1,
+                                    None).unpack()[0]
 
         info = self.call_sync('GetServerInformation',
                               None,
