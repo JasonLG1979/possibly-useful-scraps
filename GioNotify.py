@@ -37,12 +37,11 @@ class GioNotify(Gio.DBusProxy):
     }
 
     def __init__(self, **kwargs):
-        super().__init__(
-            g_bus_type=Gio.BusType.SESSION,
-            g_interface_name='org.freedesktop.Notifications',
-            g_name='org.freedesktop.Notifications',
-            g_object_path='/org/freedesktop/Notifications',
-            **kwargs
+        super().__init__(g_bus_type=Gio.BusType.SESSION,
+                         g_interface_name='org.freedesktop.Notifications',
+                         g_name='org.freedesktop.Notifications',
+                         g_object_path='/org/freedesktop/Notifications',
+                         **kwargs
         )
 
         self._last_signal = None
