@@ -109,6 +109,8 @@ class GioNotify(Gio.DBusProxy):
         )
 
     def close(self):
+        if self._replace_id == 0:
+            return
         self.call('CloseNotification',
                   GLib.Variant('(u)', (self._replace_id,)),
                   Gio.DBusCallFlags.NONE,
@@ -139,9 +141,9 @@ class GioNotify(Gio.DBusProxy):
             return
         # In GNOME Shell at least this stops multiple
         # redundant 'NotificationClosed' signals from being emmitted.   
-        if (id, signal_value) == self._last_signal:
+        if (id, signal_name) == self._last_signal:
             return
-        self._last_signal = id, signal_value
+        self._last_signal = id, signal_name
         if signal_name == 'ActionInvoked':
             self.emit('action-invoked', signal_value)
             self._callbacks[signal_value]()
