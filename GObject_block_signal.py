@@ -24,9 +24,6 @@ def GObject_block_signal(signal_name):
                                                      GObject.SignalMatchType.DETAIL,
                                                      signal_id,
                                                      detail,
-                                                     None,
-                                                     None,
-                                                     None,
             )
 
             with obj.handler_block(handler_id):
