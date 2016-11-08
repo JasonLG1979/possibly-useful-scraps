@@ -31,6 +31,18 @@ class GioNotify(Gio.DBusProxy):
         REASON_CLOSEMETHOD = 3
         REASON_UNDEFINED = 4
 
+        @property
+        def explanation(self):
+            value = self.value
+            if value == 1:
+                return 'The notification expired.'
+            elif value == 2:
+                return 'The notification was dismissed by the user.'
+            elif value == 3:
+                return 'The notification was closed by a call to CloseNotification.'
+            elif value == 4:
+                return 'The notification was closed by undefined/reserved reasons.'
+
     __gsignals__ = {
         'action-invoked': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_STRING,)),
         'closed': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_PYOBJECT,)),
