@@ -43,6 +43,7 @@ class GioNotify(Gio.DBusProxy):
             elif value == 4:
                 return 'The notification was closed by undefined/reserved reasons.'
 
+    __gtype_name__ = 'GioNotify'
     __gsignals__ = {
         'action-invoked': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_STRING,)),
         'closed': (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_PYOBJECT,)),
