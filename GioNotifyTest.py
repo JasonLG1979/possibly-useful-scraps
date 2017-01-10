@@ -1,27 +1,29 @@
 #
 # Copyright (C) 2016 Jason Gray <jasonlevigray3@gmail.com>
 #
-#This program is free software: you can redistribute it and/or modify it 
-#under the terms of the GNU General Public License version 3, as published 
-#by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3, as published
+# by the Free Software Foundation.
 #
-#This program is distributed in the hope that it will be useful, but 
-#WITHOUT ANY WARRANTY; without even the implied warranties of 
-#MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
-#PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranties of
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
+# PURPOSE.  See the GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License along 
-#with this program.  If not, see <http://www.gnu.org/licenses/>.
-### END LICENSE
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# END LICENSE
 
-#See <https://developer.gnome.org/notification-spec/> and 
-#<https://github.com/JasonLG1979/possibly-useful-scraps/wiki/GioNotify>
-#for documentation.
+# See <https://developer.gnome.org/notification-spec/> and
+# <https://github.com/JasonLG1979/possibly-useful-scraps/wiki/GioNotify>
+# for documentation.
+
+from GioNotify import GioNotify
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject, Gtk, GLib
-from GioNotify import GioNotify
+from gi.repository import GLib, GObject, Gtk
+
 
 class GioNotifyTest(Gtk.Window):
     def __init__(self):
@@ -105,9 +107,10 @@ class GioNotifyTest(Gtk.Window):
             self.notification.clear_actions()
             action = self.action_entry.get_text()
             if action:
-                self.notification.add_action(action, 
-                                             action,
-                                             dummy_action_callback,
+                self.notification.add_action(
+                    action,
+                    action,
+                    dummy_action_callback,
                 )
 
         summary = self.title_entry.get_text()
@@ -123,10 +126,10 @@ class GioNotifyTest(Gtk.Window):
         self.notification.show_new(summary, body, icon)
 
     def on_file_clicked(self, widget):
-        dialog = Gtk.FileChooserDialog('Please Choose an Image', self,
-                                       Gtk.FileChooserAction.OPEN,
-                                       ('_Cancel', Gtk.ResponseType.CANCEL,
-                                        '_Open', Gtk.ResponseType.OK),
+        dialog = Gtk.FileChooserDialog(
+            'Please Choose an Image', self,
+            Gtk.FileChooserAction.OPEN,
+            ('_Cancel', Gtk.ResponseType.CANCEL, '_Open', Gtk.ResponseType.OK),
         )
 
         self.add_filters(dialog)
@@ -157,15 +160,7 @@ class GioNotifyTest(Gtk.Window):
         self.signals_message.append('action invoked: {}'.format(action_id))
 
     def on_closed(self, obj, reason):
-        if reason is GioNotify.Closed.REASON_EXPIRED:
-            self.signals_message.append('closed: The notification expired.')
-        elif reason is GioNotify.Closed.REASON_DISMISSED:
-            self.signals_message.append('closed: The notification was dismissed by the user.')
-        elif reason is GioNotify.Closed.REASON_CLOSEMETHOD:
-            self.signals_message.append('closed: The notification was closed by a call to CloseNotification.')
-        elif reason is GioNotify.Closed.REASON_UNDEFINED:
-            self.signals_message.append('closed: The notification was closed by Undefined/reserved reasons.')
-
+        self.signals_message.append('closed reason: {}'.format(reason.explanation))
         label_text = '\n'.join(self.signals_message)
         self.signals_label.set_label(label_text)
 
