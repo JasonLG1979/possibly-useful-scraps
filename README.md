@@ -1,17 +1,17 @@
-#possibly-useful-scraps
+# possibly-useful-scraps
 A collection of possibly useful scraps so far containing a few PyGObject scripts.
 
-#GioNotify:
+# GioNotify:
 
 Very simple asynchronous desktop notifications with hint and actions support...
 
 see the [wiki](https://github.com/JasonLG1979/possibly-useful-scraps/wiki/GioNotify) for documentation.
 
-#GLib_async:
+# GLib_async:
 
 A decorator that can be used on free functions so they will be called asynchronously, Both to the main thread and to themselves.
 
-#GLib_async_queue:
+# GLib_async_queue:
 
 A single worker thread that runs asynchronous to the main thread that uses a hybrid FIFO/Priority based queue. Tasks can be asigned a Priority via the optional priority kwarg. (GLib.PRIORITY_DEFAULT_IDLE is the deafult priority) Tasks will be excuted in the order of priority, tasks with the same priority will be excuted FIFO.
 
@@ -32,7 +32,7 @@ Low priority: Call order 8, return order 11.
 Low priority: Call order 12, return order 12.
 ```
 
-#GLib_idle:
+# GLib_idle:
 GLib.idle_add decorator.
 
 Turns:
@@ -48,7 +48,7 @@ Into:
         #do awesome stuff
 ```
 
-#GObject_block_signal:
+# GObject_block_signal:
 
 Stops a signal handler from recursively calling it's self.
 
